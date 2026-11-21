@@ -19,14 +19,10 @@
   body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden}
   a{color:inherit;text-decoration:none}
 
-  /* ---------- loader ---------- */
-  #loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:22px;transition:opacity .8s ease,visibility .8s}
-  #loader.done{opacity:0;visibility:hidden}
-  #loader .logo{font-family:var(--serif);font-size:42px;letter-spacing:.32em;padding-left:.32em}
-  #loader .bar{width:160px;height:1px;background:var(--line);overflow:hidden}
-  #loader .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
-  #loader small{color:var(--muted);font-size:11px;letter-spacing:.25em;text-transform:uppercase}
+  /* ---------- intro (bloklamayan) ---------- */
+  #intro{position:fixed;inset:0;z-index:100;background:var(--bg);pointer-events:none;transition:opacity 1.1s ease .15s}
+  #intro.done{opacity:0}
+  #buf{position:absolute;left:0;top:0;height:2px;width:0;background:var(--accent);z-index:5;transition:width .3s,opacity .8s}
 
   /* ---------- nav ---------- */
   nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
@@ -34,6 +30,8 @@
   nav .brand{font-family:var(--serif);font-size:22px;letter-spacing:.3em}
   nav .links{display:flex;gap:28px;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
   nav .cta{border:1px solid var(--fg);padding:8px 16px;border-radius:40px}
+  nav{transition:background .5s,backdrop-filter .5s}
+  nav.solid{mix-blend-mode:normal;background:rgba(11,11,12,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
   @media(max-width:720px){nav .links a:not(.cta){display:none}}
 
   /* ---------- scroll film ---------- */
@@ -112,15 +110,60 @@
   .wa{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:56px;height:56px;border-radius:50%;
     background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(0,0,0,.4)}
   .wa svg{width:28px;height:28px;fill:#fff}
+  /* ---------- stok satırı tıklanabilir ---------- */
+  .row{cursor:pointer}
+  .row .m small{display:block;font-family:var(--sans);font-size:10px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:4px}
+  .row .thumb{display:none}
+
+  /* ---------- araç detay paneli ---------- */
+  #detail{position:fixed;inset:0;z-index:90;background:#0c0c0d;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    clip-path:inset(50% 0 50% 0);visibility:hidden;transition:clip-path .95s cubic-bezier(.77,0,.18,1),visibility 0s linear .95s}
+  #detail.open{clip-path:inset(0 0 0 0);visibility:visible;transition:clip-path .95s cubic-bezier(.77,0,.18,1),visibility 0s}
+  #detail .x{position:fixed;top:calc(16px + env(safe-area-inset-top));right:18px;z-index:3;width:48px;height:48px;border-radius:50%;
+    border:1px solid var(--line);background:rgba(12,12,13,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--fg);
+    font-size:22px;cursor:pointer;opacity:0;transform:rotate(-90deg);transition:opacity .5s .5s,transform .6s .5s}
+  #detail.open .x{opacity:1;transform:none}
+  .d-wrap{display:grid;grid-template-columns:1.45fr 1fr;min-height:100%}
+  @media(max-width:900px){.d-wrap{grid-template-columns:1fr}}
+  .d-gal{position:relative;background:#000;height:100vh;height:100svh;position:sticky;top:0}
+  @media(max-width:900px){.d-gal{position:relative;height:62vh;height:62svh}}
+  .d-track{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .d-track::-webkit-scrollbar{display:none}
+  .d-track figure{flex:0 0 100%;height:100%;scroll-snap-align:start;overflow:hidden}
+  .d-track img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);transition:transform 1.8s cubic-bezier(.2,.7,.2,1)}
+  #detail.open .d-track img{transform:scale(1)}
+  .d-nav{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:center;gap:8px;z-index:2}
+  .d-nav button{width:28px;height:3px;border:0;border-radius:2px;background:rgba(255,255,255,.3);cursor:pointer;padding:0;transition:background .3s,width .3s}
+  .d-nav button.on{background:var(--accent);width:44px}
+  .d-arrow{position:absolute;top:50%;transform:translateY(-50%);z-index:2;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.25);
+    background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer}
+  .d-arrow.l{left:18px}.d-arrow.r{right:18px}
+  @media(hover:none){.d-arrow{display:none}}
+  .d-count{position:absolute;left:22px;top:calc(22px + env(safe-area-inset-top));z-index:2;font-size:11px;letter-spacing:.25em;color:#ddd}
+  .d-info{padding:calc(90px + env(safe-area-inset-top)) 6vw 120px 4vw}
+  @media(max-width:900px){.d-info{padding:40px 6vw 120px}}
+  .d-info > *{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s ease}
+  #detail.open .d-info > *{opacity:1;transform:none}
+  #detail.open .d-info > *:nth-child(1){transition-delay:.45s} #detail.open .d-info > *:nth-child(2){transition-delay:.52s}
+  #detail.open .d-info > *:nth-child(3){transition-delay:.59s} #detail.open .d-info > *:nth-child(4){transition-delay:.66s}
+  #detail.open .d-info > *:nth-child(5){transition-delay:.73s} #detail.open .d-info > *:nth-child(6){transition-delay:.8s}
+  .d-info h2{font-family:var(--serif);font-weight:400;font-size:clamp(40px,4.6vw,64px);line-height:1}
+  .d-price{font-size:26px;letter-spacing:.03em;margin-top:18px}
+  .d-price small{font-size:12px;color:var(--muted);letter-spacing:.15em;margin-left:10px;text-transform:uppercase}
+  .d-specs{display:grid;grid-template-columns:1fr 1fr;margin-top:34px;border-top:1px solid var(--line)}
+  .d-specs div{padding:16px 0;border-bottom:1px solid var(--line)}
+  .d-specs div:nth-child(odd){padding-right:14px}
+  .d-specs span{display:block;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+  .d-specs b{font-weight:400;font-size:15px}
+  .d-desc{color:#cfc8bd;margin-top:28px;font-size:15px}
+  .d-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+  .d-tags i{font-style:normal;font-size:11px;letter-spacing:.12em;border:1px solid var(--line);border-radius:30px;padding:6px 12px;color:#ddd}
+  body.lock{overflow:hidden}
 </style>
 </head>
 <body>
 
-<div id="loader">
-  <div class="logo">LUMEN</div>
-  <div class="bar"><i id="lbar"></i></div>
-  <small id="ltext">Yükleniyor</small>
-</div>
+<div id="intro"></div>
 
 <nav>
   <a class="brand" href="#">LUMEN</a>
@@ -136,6 +179,7 @@
   <div class="stage">
     <video id="vid" muted playsinline preload="auto" poster="poster.jpg"></video>
     <div class="shade"></div>
+    <div id="buf"></div>
 
     <div class="cap hero on" data-from="0" data-to="0.12">
       <div class="num">İzmir · Est. 2012</div>
@@ -166,7 +210,7 @@
 <section class="block" id="hizmetler">
   <div class="reveal">
     <div class="eyebrow">Hizmetler</div>
-    <h2 class="title">Araç almak <em>kolay</em> olmalı.</h2>
+    <h2 class="title">Araç almak hiç bu kadar <em>kolay</em> olmadı.</h2>
     <p class="lead">Ekspertizden krediye, takastan teslimata kadar tüm süreci tek bir yerde, tek bir muhatapla yürütüyoruz.</p>
   </div>
   <div class="services">
@@ -185,12 +229,7 @@
     <div class="eyebrow">Öne çıkan stok</div>
     <h2 class="title">Bu hafta <em>salonda.</em></h2>
   </div>
-  <div class="stock">
-    <div class="row reveal"><div class="m">Siyah Sportif Sedan</div><div class="s">2022 · 28.000 km · Benzin · Otomatik</div><div class="p">4.250.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
-    <div class="row reveal"><div class="m">Gümüş Lüks Sedan</div><div class="s">2021 · 41.000 km · Dizel · Otomatik</div><div class="p">2.890.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
-    <div class="row reveal"><div class="m">Antrasit SUV</div><div class="s">2023 · 12.500 km · Hibrit · Otomatik</div><div class="p">3.640.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
-    <div class="row reveal"><div class="m">Gri Coupé</div><div class="s">2020 · 36.000 km · Benzin · Otomatik</div><div class="p">3.150.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
-  </div>
+  <div class="stock" id="stockList"></div>
   <div class="stats reveal">
     <div><b data-count="1200">0</b><span>Teslim edilen araç</span></div>
     <div><b data-count="14">0</b><span>Yıllık tecrübe</span></div>
@@ -209,13 +248,13 @@
       <p><span>Adres</span><span>Bornova, İzmir</span></p>
       <p><span>Hafta içi</span><span>09:00 – 20:00</span></p>
       <p><span>Cumartesi</span><span>10:00 – 18:00</span></p>
-      <p><span>Telefon</span><span>0 532 000 00 00</span></p>
+      <p><span>Telefon</span><span>0 542 572 25 23</span></p>
     </div>
     <div class="reveal">
       <p class="lead" style="margin-top:0">Görmek istediğiniz aracı yazın, salonda sizin için hazır olsun.</p>
       <div class="btns">
-        <a class="btn gold" href="https://wa.me/905320000000?text=Merhaba%2C%20test%20s%C3%BCr%C3%BC%C5%9F%C3%BC%20i%C3%A7in%20randevu%20almak%20istiyorum." target="_blank" rel="noopener">WhatsApp</a>
-        <a class="btn line" href="tel:+905320000000">Ara</a>
+        <a class="btn gold" href="https://wa.me/905425722523?text=Merhaba%2C%20test%20s%C3%BCr%C3%BC%C5%9F%C3%BC%20i%C3%A7in%20randevu%20almak%20istiyorum." target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn line" href="tel:+905425722523">Ara</a>
         <a class="btn line" href="https://maps.google.com/?q=Bornova+%C4%B0zmir" target="_blank" rel="noopener">Yol tarifi</a>
       </div>
     </div>
@@ -228,72 +267,133 @@
   <span>Tasarım: <a href="https://duckducktasarim.site" style="color:var(--fg)">duckducktasarim</a></span>
 </footer>
 
+<!-- ================= ARAÇ DETAY ================= -->
+<div id="detail" aria-hidden="true">
+  <button class="x" id="dClose" aria-label="Kapat">✕</button>
+  <div class="d-wrap">
+    <div class="d-gal">
+      <div class="d-count" id="dCount"></div>
+      <div class="d-track" id="dTrack"></div>
+      <button class="d-arrow l" id="dPrev" aria-label="Önceki">←</button>
+      <button class="d-arrow r" id="dNext" aria-label="Sonraki">→</button>
+      <div class="d-nav" id="dDots"></div>
+    </div>
+    <div class="d-info">
+      <div class="eyebrow" id="dNo"></div>
+      <h2 id="dName"></h2>
+      <div class="d-price" id="dPrice"></div>
+      <div class="d-specs" id="dSpecs"></div>
+      <p class="d-desc" id="dDesc"></p>
+      <div>
+        <div class="d-tags" id="dTags"></div>
+        <div class="btns">
+          <a class="btn gold" id="dWa" target="_blank" rel="noopener">WhatsApp'tan sor</a>
+          <a class="btn line" href="tel:+905425722523">Ara</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="demo">Örnek tasarımdır</div>
-<a class="wa" href="https://wa.me/905320000000" target="_blank" rel="noopener" aria-label="WhatsApp">
+<a class="wa" href="https://wa.me/905425722523" target="_blank" rel="noopener" aria-label="WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.2 0-5.4 4.4-9.8 9.8-9.8 2.6 0 5.1 1 6.9 2.9 1.9 1.9 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zM20.3 3.7C18.1 1.5 15.1.2 12 .2 5.5.2.2 5.5.2 12c0 2.1.5 4.1 1.6 5.9L.1 24l6.3-1.6c1.7.9 3.7 1.4 5.6 1.4 6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.5-8.3z"/></svg>
 </a>
 
 <script>
+/* ================== STOK VERİSİ — araç eklemek/değiştirmek için sadece burayı düzenle ================== */
+var CARS = [
+  { no:'LM-2201', name:'Siyah Sportif Sedan', year:2022, km:'28.000', fuel:'Benzin', gear:'Otomatik', price:'4.250.000',
+    body:'Sedan', color:'Gece Siyahı', engine:'2.9 V6', power:'440 HP', tramer:'Yok', owner:'1. sahibinden',
+    desc:'Yetkili servis bakımlı, tüm bakım kayıtları mevcut. Panoramik cam tavan, adaptif hava süspansiyon, 21" jantlar ve premium ses sistemi. Boyasız, değişensiz.',
+    tags:['Boyasız','Servis bakımlı','Garantili','Takasa uygun'],
+    imgs:['siyah-1.jpg','siyah-2.jpg','siyah-3.jpg','siyah-4.jpg'] },
+  { no:'LM-2202', name:'Gümüş Lüks Sedan', year:2021, km:'41.000', fuel:'Dizel', gear:'Otomatik', price:'2.890.000',
+    body:'Sedan', color:'Gümüş Gri', engine:'2.0 Dizel', power:'194 HP', tramer:'12.500 ₺', owner:'2. sahibinden',
+    desc:'Ekonomik ve konforlu dizel sedan. Hafıza paketli koltuklar, geri görüş kamerası, şerit takip asistanı. Ekspertiz raporu salonda incelenebilir.',
+    tags:['Ekspertizli','Krediye uygun','Takasa uygun'],
+    imgs:['gumus-1.jpg','salon.jpg','dis.jpg'] },
+  { no:'LM-2203', name:'Antrasit SUV', year:2023, km:'12.500', fuel:'Hibrit', gear:'Otomatik', price:'3.640.000',
+    body:'SUV', color:'Antrasit', engine:'2.0 Hibrit', power:'265 HP', tramer:'Yok', owner:'1. sahibinden',
+    desc:'Neredeyse sıfır ayarında hibrit SUV. 4x4 çekiş, elektrikli bagaj kapağı, 360° kamera ve adaptif hız sabitleyici. Fabrika garantisi devam ediyor.',
+    tags:['Garantili','Boyasız','Hibrit'],
+    imgs:['suv-1.jpg','salon.jpg','dis.jpg'] },
+  { no:'LM-2204', name:'Gri Coupé', year:2020, km:'36.000', fuel:'Benzin', gear:'Otomatik', price:'3.150.000',
+    body:'Coupé', color:'Grafit Gri', engine:'3.0 Turbo', power:'340 HP', tramer:'Yok', owner:'1. sahibinden',
+    desc:'Sportif sürüşü sevenler için. Spor egzoz, karbon iç trim, head-up ekran ve 20" jantlar. Kapalı garajda kullanıldı.',
+    tags:['Boyasız','Garaj aracı','Takasa uygun'],
+    imgs:['coupe-1.jpg','salon.jpg','dis.jpg'] }
+];
+var PHONE_WA = '905425722523';
+
 (function(){
   var vid = document.getElementById('vid');
   var film = document.getElementById('film');
+  var nav = document.querySelector('nav');
   var caps = [].slice.call(document.querySelectorAll('.cap'));
   var dots = [].slice.call(document.querySelectorAll('.progress span'));
   var hint = document.getElementById('hint');
-  var loader = document.getElementById('loader');
-  var lbar = document.getElementById('lbar');
-  var duration = 0, target = 0, current = 0, ready = false;
+  var buf = document.getElementById('buf');
+  var duration = 9.79, target = 0, current = 0, ready = false;
 
-  function finishLoading(){
-    if (ready) return;
-    ready = true;
-    duration = vid.duration || 9.79;
-    lbar.style.width = '100%';
-    setTimeout(function(){ loader.classList.add('done'); }, 250);
-    // iOS: kareyi göstermek için bir kez oynatıp durdur
-    var p = vid.play(); if (p && p.then) p.then(function(){ vid.pause(); }).catch(function(){});
-    onScroll();
-  }
+  /* ---- Giriş: beklemeden açılır. Poster anında görünür, video arka planda akarak iner ---- */
+  requestAnimationFrame(function(){ document.getElementById('intro').classList.add('done'); });
+  vid.src = 'galeri.mp4';
+  vid.preload = 'auto';
+  vid.addEventListener('loadedmetadata', function(){ duration = vid.duration || duration; onScroll(); });
+  vid.addEventListener('loadeddata', function(){ ready = true; prime(); });
 
-  // Videoyu tamamen indir, sonra blob olarak bağla (akıcı ileri-geri sarma için)
+  /* Arka planda videonun tamamını indir; bitince görünmeden hafızadaki kopyaya geç (en akıcı sarma) */
   var xhr = new XMLHttpRequest();
   xhr.open('GET', 'galeri.mp4', true);
   xhr.responseType = 'blob';
-  xhr.onprogress = function(e){ if (e.lengthComputable) lbar.style.width = (e.loaded / e.total * 100) + '%'; };
+  xhr.onprogress = function(e){ if (e.lengthComputable) setBuf(e.loaded / e.total * 100); };
   xhr.onload = function(){
-    if (xhr.status === 200 || xhr.status === 0) {
-      vid.src = URL.createObjectURL(xhr.response);
-    } else { vid.src = 'galeri.mp4'; }
-    vid.addEventListener('loadeddata', finishLoading, {once:true});
-    vid.load();
+    if (xhr.status !== 200) return;
+    setBuf(100);
+    var v2 = document.createElement('video');
+    v2.muted = true; v2.playsInline = true; v2.setAttribute('playsinline',''); v2.setAttribute('muted','');
+    v2.preload = 'auto';
+    v2.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0';
+    vid.parentNode.insertBefore(v2, vid.nextSibling);
+    v2.addEventListener('loadeddata', function(){
+      var p = v2.play(); if (p && p.then) p.then(function(){ v2.pause(); }).catch(function(){});
+      v2.addEventListener('seeked', function(){
+        v2.style.opacity = 1;
+        var old = vid; old.removeAttribute('id'); v2.id = 'vid'; vid = v2; ready = true;
+        setTimeout(function(){ old.remove(); }, 100);
+      }, {once:true});
+      v2.currentTime = current;
+    }, {once:true});
+    v2.src = URL.createObjectURL(xhr.response);
   };
-  xhr.onerror = function(){ vid.src = 'galeri.mp4'; vid.addEventListener('loadeddata', finishLoading, {once:true}); vid.load(); };
   xhr.send();
-  setTimeout(function(){ if(!ready && vid.readyState >= 2) finishLoading(); }, 12000);
+  function prime(){ var p = vid.play(); if (p && p.then) p.then(function(){ vid.pause(); }).catch(function(){}); }
+  window.addEventListener('touchstart', function once(){ prime(); window.removeEventListener('touchstart', once); }, {passive:true});
+  function setBuf(pct){ buf.style.width = pct + '%'; if (pct >= 99.5) setTimeout(function(){ buf.style.opacity = 0; }, 400); }
 
   function progress(){
     var r = film.getBoundingClientRect();
     var total = film.offsetHeight - window.innerHeight;
     return Math.min(1, Math.max(0, -r.top / total));
   }
-
   function onScroll(){
     var p = progress();
     target = p * Math.max(0, duration - 0.05);
     caps.forEach(function(c){
-      var on = p >= parseFloat(c.dataset.from) && p < parseFloat(c.dataset.to);
-      c.classList.toggle('on', on);
+      c.classList.toggle('on', p >= parseFloat(c.dataset.from) && p < parseFloat(c.dataset.to));
     });
     var idx = p < 0.15 ? 0 : p < 0.5 ? 1 : p < 0.8 ? 2 : 3;
     dots.forEach(function(d,i){ d.classList.toggle('on', i <= idx); });
     hint.style.opacity = p > 0.03 ? 0 : 1;
+    nav.classList.toggle('solid', film.getBoundingClientRect().bottom < 80);
   }
   window.addEventListener('scroll', onScroll, {passive:true});
   window.addEventListener('resize', onScroll);
+  onScroll();
 
-  // Yumuşak takip: video zamanı hedefe süzülerek yaklaşır
   (function tick(){
-    if (ready && duration) {
+    if (ready) {
       current += (target - current) * 0.12;
       if (Math.abs(target - current) < 0.002) current = target;
       if (!vid.seeking && Math.abs(vid.currentTime - current) > 0.01) {
@@ -303,21 +403,86 @@
     requestAnimationFrame(tick);
   })();
 
-  // Bölüm animasyonları
+  /* ---- Stok listesi ---- */
+  var list = document.getElementById('stockList');
+  CARS.forEach(function(c, i){
+    var row = document.createElement('div');
+    row.className = 'row reveal';
+    row.innerHTML = '<div class="m"><small>' + c.no + '</small>' + c.name + '</div>' +
+      '<div class="s">' + c.year + ' · ' + c.km + ' km · ' + c.fuel + ' · ' + c.gear + '</div>' +
+      '<div class="p">' + c.price + ' ₺</div><a href="#arac-' + c.no + '">İncele</a>';
+    row.addEventListener('click', function(e){ e.preventDefault(); openCar(i); });
+    list.appendChild(row);
+  });
+
+  /* ---- Detay paneli ---- */
+  var D = document.getElementById('detail'), track = document.getElementById('dTrack'),
+      dDots = document.getElementById('dDots'), dCount = document.getElementById('dCount');
+  function $(id){ return document.getElementById(id); }
+  function openCar(i, fromHistory){
+    var c = CARS[i];
+    $('dNo').textContent = 'Stok No · ' + c.no;
+    $('dName').textContent = c.name;
+    $('dPrice').innerHTML = c.price + ' ₺<small>Takas & kredi uygun</small>';
+    var specs = [['Yıl',c.year],['Kilometre',c.km + ' km'],['Yakıt',c.fuel],['Vites',c.gear],['Kasa',c.body],['Renk',c.color],
+                 ['Motor',c.engine],['Güç',c.power],['Tramer',c.tramer],['Sahiplik',c.owner]];
+    $('dSpecs').innerHTML = specs.map(function(s){ return '<div><span>' + s[0] + '</span><b>' + s[1] + '</b></div>'; }).join('');
+    $('dDesc').textContent = c.desc;
+    $('dTags').innerHTML = c.tags.map(function(t){ return '<i>' + t + '</i>'; }).join('');
+    $('dWa').href = 'https://wa.me/' + PHONE_WA + '?text=' + encodeURIComponent('Merhaba, ' + c.no + ' numaralı ' + c.name + ' hakkında bilgi almak istiyorum.');
+    track.innerHTML = c.imgs.map(function(src, k){ return '<figure><img src="' + src + '" alt="' + c.name + ' ' + (k+1) + '"></figure>'; }).join('');
+    dDots.innerHTML = c.imgs.map(function(_, k){ return '<button aria-label="Fotoğraf ' + (k+1) + '"></button>'; }).join('');
+    [].forEach.call(dDots.children, function(b, k){ b.onclick = function(){ go(k); }; });
+    track.scrollLeft = 0; D.scrollTop = 0; setActive(0);
+    document.body.classList.add('lock');
+    D.setAttribute('aria-hidden','false');
+    D.offsetHeight; // reflow — animasyon her seferinde baştan başlasın
+    D.classList.add('open');
+    if (!fromHistory) history.pushState({car:i}, '', '#arac-' + c.no);
+  }
+  function closeCar(fromHistory){
+    if (!D.classList.contains('open')) return;
+    D.classList.remove('open');
+    D.setAttribute('aria-hidden','true');
+    document.body.classList.remove('lock');
+    if (!fromHistory && history.state && history.state.car !== undefined) history.back();
+  }
+  function setActive(k){
+    [].forEach.call(dDots.children, function(b, j){ b.classList.toggle('on', j === k); });
+    dCount.textContent = String(k+1).padStart(2,'0') + ' / ' + String(track.children.length).padStart(2,'0');
+  }
+  function go(k){
+    var n = track.children.length; k = (k + n) % n;
+    track.scrollTo({left: k * track.clientWidth, behavior:'smooth'});
+  }
+  function cur(){ return Math.round(track.scrollLeft / track.clientWidth); }
+  track.addEventListener('scroll', function(){ setActive(cur()); }, {passive:true});
+  $('dPrev').onclick = function(){ go(cur() - 1); };
+  $('dNext').onclick = function(){ go(cur() + 1); };
+  $('dClose').onclick = function(){ closeCar(); };
+  document.addEventListener('keydown', function(e){
+    if (!D.classList.contains('open')) return;
+    if (e.key === 'Escape') closeCar();
+    if (e.key === 'ArrowRight') go(cur() + 1);
+    if (e.key === 'ArrowLeft') go(cur() - 1);
+  });
+  window.addEventListener('popstate', function(e){
+    if (e.state && e.state.car !== undefined) openCar(e.state.car, true); else closeCar(true);
+  });
+
+  /* ---- Bölüm animasyonları ---- */
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
       if (!e.isIntersecting) return;
       e.target.classList.add('in');
       e.target.querySelectorAll('[data-count]').forEach(countUp);
-      if (e.target.dataset.count) countUp(e.target);
       io.unobserve(e.target);
     });
   }, {threshold:0.18});
   document.querySelectorAll('.reveal').forEach(function(el, i){
-    el.style.transitionDelay = (el.parentElement.classList.contains('services') ? (i % 3) * 0.12 : 0) + 's';
+    if (el.parentElement.classList.contains('services')) el.style.transitionDelay = (i % 3) * 0.12 + 's';
     io.observe(el);
   });
-
   function countUp(el){
     if (el.dataset.done) return; el.dataset.done = 1;
     var end = +el.dataset.count, suf = el.dataset.suffix || (end >= 1000 ? '+' : ''), t0 = null;
