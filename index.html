@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LUMEN Otomotiv — İzmir</title>
+<meta name="description" content="LUMEN Otomotiv: seçkin ikinci el ve sıfır araçlar, ekspertiz garantisi, takas ve kredi imkânı.">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0b0c; --fg:#f1ece4; --muted:#9a948b; --line:rgba(241,236,228,.14);
+    --accent:#d9a25f; --serif:'Cormorant Garamond',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-weight:300;line-height:1.6;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- loader ---------- */
+  #loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:22px;transition:opacity .8s ease,visibility .8s}
+  #loader.done{opacity:0;visibility:hidden}
+  #loader .logo{font-family:var(--serif);font-size:42px;letter-spacing:.32em;padding-left:.32em}
+  #loader .bar{width:160px;height:1px;background:var(--line);overflow:hidden}
+  #loader .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+  #loader small{color:var(--muted);font-size:11px;letter-spacing:.25em;text-transform:uppercase}
+
+  /* ---------- nav ---------- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
+    padding:calc(18px + env(safe-area-inset-top)) 6vw 18px;mix-blend-mode:difference}
+  nav .brand{font-family:var(--serif);font-size:22px;letter-spacing:.3em}
+  nav .links{display:flex;gap:28px;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+  nav .cta{border:1px solid var(--fg);padding:8px 16px;border-radius:40px}
+  @media(max-width:720px){nav .links a:not(.cta){display:none}}
+
+  /* ---------- scroll film ---------- */
+  #film{position:relative;height:600vh}
+  #film .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+  #film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+  #film .shade{position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.65) 100%)}
+  .cap{position:absolute;left:6vw;bottom:12vh;max-width:min(560px,88vw);opacity:0;transform:translateY(24px);
+    transition:opacity .9s ease,transform .9s ease;pointer-events:none}
+  .cap.on{opacity:1;transform:none}
+  .cap .num{font-size:11px;letter-spacing:.3em;color:var(--accent);text-transform:uppercase;margin-bottom:14px}
+  .cap h2{font-family:var(--serif);font-weight:400;font-size:clamp(40px,7vw,84px);line-height:1}
+  .cap h2 em{font-style:italic}
+  .cap p{margin-top:16px;color:#d6d0c6;font-size:15px;max-width:380px}
+  .cap.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(52px,10vw,132px);line-height:.95;letter-spacing:-.01em}
+  .scrollhint{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);font-size:10px;letter-spacing:.35em;
+    text-transform:uppercase;color:var(--muted);transition:opacity .6s}
+  .scrollhint::after{content:"";display:block;width:1px;height:34px;margin:10px auto 0;background:linear-gradient(var(--fg),transparent);
+    animation:drop 1.8s ease-in-out infinite}
+  @keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  .progress{position:absolute;right:6vw;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px}
+  .progress span{width:2px;height:22px;background:var(--line);transition:background .4s}
+  .progress span.on{background:var(--accent)}
+
+  /* ---------- sections ---------- */
+  section.block{padding:120px 6vw;border-top:1px solid var(--line)}
+  .eyebrow{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+  .title{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5.5vw,68px);line-height:1.02;max-width:760px}
+  .title em{font-style:italic}
+  .lead{color:var(--muted);max-width:520px;margin-top:22px}
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  .services{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:64px}
+  @media(max-width:860px){.services{grid-template-columns:1fr}}
+  .card{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:4/5;background:#151515}
+  .card img{width:100%;height:100%;object-fit:cover;transform:scale(1.08);transition:transform 1.6s ease}
+  .card.in img{transform:scale(1)}
+  .card .txt{position:absolute;inset:auto 0 0 0;padding:26px;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+  .card h3{font-family:var(--serif);font-weight:400;font-size:30px}
+  .card p{font-size:14px;color:#cfc8bd;margin-top:6px}
+
+  .stock{margin-top:56px}
+  .row{display:grid;grid-template-columns:1.6fr 1fr 1fr auto;gap:20px;align-items:center;padding:26px 0;border-bottom:1px solid var(--line);
+    transition:padding .4s ease}
+  .row:hover{padding-left:12px}
+  .row .m{font-family:var(--serif);font-size:28px}
+  .row .s{color:var(--muted);font-size:13px}
+  .row .p{font-size:15px;letter-spacing:.04em}
+  .row a{font-size:11px;letter-spacing:.2em;text-transform:uppercase;border:1px solid var(--line);padding:9px 14px;border-radius:40px;white-space:nowrap}
+  @media(max-width:720px){.row{grid-template-columns:1fr auto}.row .s{grid-column:1}.row .p{grid-column:1}.row a{grid-row:1/4;grid-column:2}}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:64px}
+  .stats div{border-top:1px solid var(--line);padding-top:20px}
+  .stats b{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(44px,6vw,72px);line-height:1}
+  .stats span{color:var(--muted);font-size:13px}
+  @media(max-width:600px){.stats{grid-template-columns:1fr}}
+
+  .contact{display:grid;grid-template-columns:1.2fr 1fr;gap:60px;margin-top:56px}
+  @media(max-width:860px){.contact{grid-template-columns:1fr}}
+  .info p{padding:18px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px}
+  .info p span:first-child{color:var(--muted);font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+  .btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:15px 24px;border-radius:40px;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+  .btn.gold{background:var(--accent);color:#111;font-weight:500}
+  .btn.line{border:1px solid var(--line)}
+
+  footer{padding:60px 6vw calc(40px + env(safe-area-inset-bottom));border-top:1px solid var(--line);display:flex;justify-content:space-between;
+    flex-wrap:wrap;gap:20px;color:var(--muted);font-size:12px}
+  footer .big{font-family:var(--serif);font-size:clamp(60px,14vw,190px);color:var(--fg);letter-spacing:.12em;line-height:1;width:100%}
+
+  .demo{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:60;font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:30px}
+  .wa{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:56px;height:56px;border-radius:50%;
+    background:#25d366;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+  .wa svg{width:28px;height:28px;fill:#fff}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="logo">LUMEN</div>
+  <div class="bar"><i id="lbar"></i></div>
+  <small id="ltext">Yükleniyor</small>
+</div>
+
+<nav>
+  <a class="brand" href="#">LUMEN</a>
+  <div class="links">
+    <a href="#hizmetler">Hizmetler</a>
+    <a href="#stok">Stok</a>
+    <a href="#iletisim" class="cta">Randevu</a>
+  </div>
+</nav>
+
+<!-- ================= SCROLL FILM ================= -->
+<div id="film">
+  <div class="stage">
+    <video id="vid" muted playsinline preload="auto" poster="poster.jpg"></video>
+    <div class="shade"></div>
+
+    <div class="cap hero on" data-from="0" data-to="0.12">
+      <div class="num">İzmir · Est. 2012</div>
+      <h1>Gece bile<br><em>parlayan</em> bir vitrin.</h1>
+    </div>
+    <div class="cap" data-from="0.18" data-to="0.40">
+      <div class="num">01 — Vitrin</div>
+      <h2>Işıklar <em>sizin</em><br>için yanıyor.</h2>
+      <p>Her araç, sizi karşılamaya hazır. Özenle seçilmiş, eksiksiz bakımlı.</p>
+    </div>
+    <div class="cap" data-from="0.56" data-to="0.76">
+      <div class="num">02 — Salon</div>
+      <h2>İçeri <em>buyurun.</em></h2>
+      <p>Acele yok, baskı yok. Kahvenizi için, aracınızı rahatça inceleyin.</p>
+    </div>
+    <div class="cap" data-from="0.82" data-to="1.01">
+      <div class="num">03 — Detay</div>
+      <h2>Her detay,<br><em>bir hikâye.</em></h2>
+      <p>Bağımsız ekspertiz raporu, şeffaf geçmiş, net fiyat.</p>
+    </div>
+
+    <div class="progress"><span></span><span></span><span></span><span></span></div>
+    <div class="scrollhint" id="hint">Kaydırın</div>
+  </div>
+</div>
+
+<!-- ================= HİZMETLER ================= -->
+<section class="block" id="hizmetler">
+  <div class="reveal">
+    <div class="eyebrow">Hizmetler</div>
+    <h2 class="title">Araç almak <em>kolay</em> olmalı.</h2>
+    <p class="lead">Ekspertizden krediye, takastan teslimata kadar tüm süreci tek bir yerde, tek bir muhatapla yürütüyoruz.</p>
+  </div>
+  <div class="services">
+    <div class="card reveal"><img src="s1.jpg" alt="Galeri dış görünüm" loading="lazy">
+      <div class="txt"><h3>Ekspertiz Garantisi</h3><p>Her araç bağımsız ekspertizden geçer, rapor size teslim edilir.</p></div></div>
+    <div class="card reveal"><img src="s2.jpg" alt="Galeri salonu" loading="lazy">
+      <div class="txt"><h3>Takas</h3><p>Mevcut aracınızı yerinde değerleyip anında takasa alıyoruz.</p></div></div>
+    <div class="card reveal"><img src="s3.jpg" alt="Araç detay" loading="lazy">
+      <div class="txt"><h3>Kredi & Leasing</h3><p>Anlaşmalı bankalarla aynı gün kredi onayı.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= STOK ================= -->
+<section class="block" id="stok">
+  <div class="reveal">
+    <div class="eyebrow">Öne çıkan stok</div>
+    <h2 class="title">Bu hafta <em>salonda.</em></h2>
+  </div>
+  <div class="stock">
+    <div class="row reveal"><div class="m">Siyah Sportif Sedan</div><div class="s">2022 · 28.000 km · Benzin · Otomatik</div><div class="p">4.250.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
+    <div class="row reveal"><div class="m">Gümüş Lüks Sedan</div><div class="s">2021 · 41.000 km · Dizel · Otomatik</div><div class="p">2.890.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
+    <div class="row reveal"><div class="m">Antrasit SUV</div><div class="s">2023 · 12.500 km · Hibrit · Otomatik</div><div class="p">3.640.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
+    <div class="row reveal"><div class="m">Gri Coupé</div><div class="s">2020 · 36.000 km · Benzin · Otomatik</div><div class="p">3.150.000 ₺</div><a href="#iletisim">Bilgi al</a></div>
+  </div>
+  <div class="stats reveal">
+    <div><b data-count="1200">0</b><span>Teslim edilen araç</span></div>
+    <div><b data-count="14">0</b><span>Yıllık tecrübe</span></div>
+    <div><b data-count="98" data-suffix="%">0</b><span>Memnun müşteri</span></div>
+  </div>
+</section>
+
+<!-- ================= İLETİŞİM ================= -->
+<section class="block" id="iletisim">
+  <div class="reveal">
+    <div class="eyebrow">İletişim</div>
+    <h2 class="title">Bir <em>test sürüşü</em><br>ayarlayalım.</h2>
+  </div>
+  <div class="contact">
+    <div class="info reveal">
+      <p><span>Adres</span><span>Bornova, İzmir</span></p>
+      <p><span>Hafta içi</span><span>09:00 – 20:00</span></p>
+      <p><span>Cumartesi</span><span>10:00 – 18:00</span></p>
+      <p><span>Telefon</span><span>0 532 000 00 00</span></p>
+    </div>
+    <div class="reveal">
+      <p class="lead" style="margin-top:0">Görmek istediğiniz aracı yazın, salonda sizin için hazır olsun.</p>
+      <div class="btns">
+        <a class="btn gold" href="https://wa.me/905320000000?text=Merhaba%2C%20test%20s%C3%BCr%C3%BC%C5%9F%C3%BC%20i%C3%A7in%20randevu%20almak%20istiyorum." target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn line" href="tel:+905320000000">Ara</a>
+        <a class="btn line" href="https://maps.google.com/?q=Bornova+%C4%B0zmir" target="_blank" rel="noopener">Yol tarifi</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="big">LUMEN</div>
+  <span>© 2026 LUMEN Otomotiv</span>
+  <span>Tasarım: <a href="https://duckducktasarim.site" style="color:var(--fg)">duckducktasarim</a></span>
+</footer>
+
+<div class="demo">Örnek tasarımdır</div>
+<a class="wa" href="https://wa.me/905320000000" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.7.6.7.2 1.3.2 1.8.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4c-1-1.6-1.5-3.4-1.5-5.2 0-5.4 4.4-9.8 9.8-9.8 2.6 0 5.1 1 6.9 2.9 1.9 1.9 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zM20.3 3.7C18.1 1.5 15.1.2 12 .2 5.5.2.2 5.5.2 12c0 2.1.5 4.1 1.6 5.9L.1 24l6.3-1.6c1.7.9 3.7 1.4 5.6 1.4 6.5 0 11.8-5.3 11.8-11.8 0-3.2-1.2-6.1-3.5-8.3z"/></svg>
+</a>
+
+<script>
+(function(){
+  var vid = document.getElementById('vid');
+  var film = document.getElementById('film');
+  var caps = [].slice.call(document.querySelectorAll('.cap'));
+  var dots = [].slice.call(document.querySelectorAll('.progress span'));
+  var hint = document.getElementById('hint');
+  var loader = document.getElementById('loader');
+  var lbar = document.getElementById('lbar');
+  var duration = 0, target = 0, current = 0, ready = false;
+
+  function finishLoading(){
+    if (ready) return;
+    ready = true;
+    duration = vid.duration || 9.79;
+    lbar.style.width = '100%';
+    setTimeout(function(){ loader.classList.add('done'); }, 250);
+    // iOS: kareyi göstermek için bir kez oynatıp durdur
+    var p = vid.play(); if (p && p.then) p.then(function(){ vid.pause(); }).catch(function(){});
+    onScroll();
+  }
+
+  // Videoyu tamamen indir, sonra blob olarak bağla (akıcı ileri-geri sarma için)
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'galeri.mp4', true);
+  xhr.responseType = 'blob';
+  xhr.onprogress = function(e){ if (e.lengthComputable) lbar.style.width = (e.loaded / e.total * 100) + '%'; };
+  xhr.onload = function(){
+    if (xhr.status === 200 || xhr.status === 0) {
+      vid.src = URL.createObjectURL(xhr.response);
+    } else { vid.src = 'galeri.mp4'; }
+    vid.addEventListener('loadeddata', finishLoading, {once:true});
+    vid.load();
+  };
+  xhr.onerror = function(){ vid.src = 'galeri.mp4'; vid.addEventListener('loadeddata', finishLoading, {once:true}); vid.load(); };
+  xhr.send();
+  setTimeout(function(){ if(!ready && vid.readyState >= 2) finishLoading(); }, 12000);
+
+  function progress(){
+    var r = film.getBoundingClientRect();
+    var total = film.offsetHeight - window.innerHeight;
+    return Math.min(1, Math.max(0, -r.top / total));
+  }
+
+  function onScroll(){
+    var p = progress();
+    target = p * Math.max(0, duration - 0.05);
+    caps.forEach(function(c){
+      var on = p >= parseFloat(c.dataset.from) && p < parseFloat(c.dataset.to);
+      c.classList.toggle('on', on);
+    });
+    var idx = p < 0.15 ? 0 : p < 0.5 ? 1 : p < 0.8 ? 2 : 3;
+    dots.forEach(function(d,i){ d.classList.toggle('on', i <= idx); });
+    hint.style.opacity = p > 0.03 ? 0 : 1;
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+
+  // Yumuşak takip: video zamanı hedefe süzülerek yaklaşır
+  (function tick(){
+    if (ready && duration) {
+      current += (target - current) * 0.12;
+      if (Math.abs(target - current) < 0.002) current = target;
+      if (!vid.seeking && Math.abs(vid.currentTime - current) > 0.01) {
+        try { vid.currentTime = current; } catch(e){}
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+
+  // Bölüm animasyonları
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (!e.isIntersecting) return;
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(countUp);
+      if (e.target.dataset.count) countUp(e.target);
+      io.unobserve(e.target);
+    });
+  }, {threshold:0.18});
+  document.querySelectorAll('.reveal').forEach(function(el, i){
+    el.style.transitionDelay = (el.parentElement.classList.contains('services') ? (i % 3) * 0.12 : 0) + 's';
+    io.observe(el);
+  });
+
+  function countUp(el){
+    if (el.dataset.done) return; el.dataset.done = 1;
+    var end = +el.dataset.count, suf = el.dataset.suffix || (end >= 1000 ? '+' : ''), t0 = null;
+    function step(t){
+      if (!t0) t0 = t;
+      var k = Math.min(1, (t - t0) / 1600), v = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      el.textContent = v.toLocaleString('tr-TR') + suf;
+      if (k < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+})();
+</script>
+</body>
+</html>
